@@ -1,7 +1,8 @@
 {
   "expo": {
     "name": "Suroy",
-    "slug": "Suroy",
+    "scheme": "suroy",
+    "slug": "suroy",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -13,7 +14,9 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.bukonibiko.suroy",
+      "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
       "adaptiveIcon": {
@@ -21,10 +24,30 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "googleServicesFile": "./google-services.json",
+      "predictiveBackGestureEnabled": false,
+      "package": "com.bukonibiko.suroy"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
-    }
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "@react-native-google-signin/google-signin",
+      "@react-native-firebase/app",
+      [
+
+        "expo-build-properties",
+        {
+          "ios": {
+              "useFrameworks": "static"
+          }
+        }
+
+      ]
+
+    ]
   }
 }

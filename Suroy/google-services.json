@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "403471940832",
+    "firebase_url": "https://suroy-6fbc0-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "suroy-6fbc0",
+    "storage_bucket": "suroy-6fbc0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:403471940832:android:246642e4cb5430bdfee485",
+        "android_client_info": {
+          "package_name": "com.bukonibiko.suroy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "403471940832-8rg3hmm4v9k817g49h2ha206esvbnmm0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bukonibiko.suroy",
+            "certificate_hash": "fc4f228fe255192a6252691a3f7b0108def31820"
+          }
+        },
+        {
+          "client_id": "403471940832-octv0af2o3jkq4cc5tlslacc6fvhcq94.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCfUmD_Or8zRLlzBLtsyEW6OqDohErSmgw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "403471940832-octv0af2o3jkq4cc5tlslacc6fvhcq94.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "403471940832-q2hjri3m6oridfgb7jefilkl8h25mbkh.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.bukonibiko.suroy"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
