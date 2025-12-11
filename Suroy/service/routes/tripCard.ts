@@ -11,17 +11,32 @@ import {
 import getUser from "../authDB";
 import { db } from "@/FirebaseConfig";
 
-// --- DATABASE OPERATIONS ---
+export type tripCardContent = {
+  id: string;
+  title: string;
+  location: string;
+  startDate: Date;
+  endDate: Date;
+  minBudget: number;
+  maxBudget: number;
+  isComplete: Boolean;
+  createdAt: Date;
+};
 
-// 1. Add Task (Automatically adds the User ID)
-export const addTripCard = async (taskContent: string) => {
+export const addTripCard = async (tripContent: tripCardContent) => {
   const user = getUser(); // Get the user automatically
 
-  await addDoc(collection(db, "tripCard"), {
-    content: taskContent,
+  await addDoc(collection(db, "tripCards"), {
     userId: user.uid, // 👈 Attached automatically
-    createdAt: new Date(),
-    isComplete: false,
+    id: tripContent.id,
+    title: tripContent.title,
+    location: tripContent.location,
+    startDate: tripContent.startDate,
+    endDate: tripContent.endDate,
+    minBudget: tripContent.minBudget,
+    maxBudgget: tripContent.maxBudget,
+    isComplete: tripContent.isComplete,
+    createdAt: tripContent.createdAt,
   });
 };
 
@@ -30,24 +45,22 @@ export const getTripCard = async () => {
   const user = getUser();
 
   const q = query(
-    collection(db, "tripCard"),
+    collection(db, "tripCards"),
     where("userId", "==", user.uid), // 👈 Filter automatically
   );
 
   const snapshot = await getDocs(q);
-  // Convert snapshot to simple array
   return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 };
 
 export const updateTripCard = async (taskId: string, updatedData: object) => {
-  const taskRef = doc(db, "tripCard", taskId);
+  const taskRef = doc(db, "tripCards", taskId);
 
   await updateDoc(taskRef, updatedData);
 };
 
-// 4. Delete Task
 export const deleteTripCard = async (taskId: string) => {
-  const taskRef = doc(db, "tripCard", taskId);
+  const taskRef = doc(db, "tripCards", taskId);
 
   await deleteDoc(taskRef);
 };

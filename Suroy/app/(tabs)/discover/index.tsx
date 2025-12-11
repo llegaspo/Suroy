@@ -198,7 +198,7 @@ const BottomNavItem = ({ label, isActive, Icon }) => (
 
 // --- Main Screen ---
 
-export default function WandrScreen() {
+export default function DiscoverScreen() {
   const [isDiscoverable, setIsDiscoverable] = React.useState(false);
 
   return (

@@ -17,10 +17,9 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="home/index"
+        name="myTrips/index"
         options={{
-          title: "Home",
-          tabBarLabel: "Home",
+          title: "My Trips",
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? "home" : "home-outline"}
@@ -31,9 +30,9 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore/index"
+        name="discover/index"
         options={{
-          title: "Explore",
+          title: "Discover",
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? "compass" : "compass-outline"}

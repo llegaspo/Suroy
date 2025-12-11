@@ -12,7 +12,7 @@ export default function SignUp() {
   const signIn = async () => {
     try {
       const user = await signInWithEmailAndPassword(auth, email, password);
-      router.replace("../(tabs)/home");
+      router.replace("../(tabs)/myTrips");
     } catch (e: any) {
       console.log(e);
       alert("Sign In Failed: " + e.message);
