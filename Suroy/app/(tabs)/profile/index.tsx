@@ -3,200 +3,177 @@ import {
   View,
   Text,
   Image,
-  StyleSheet,
   ScrollView,
+  StyleSheet,
   TouchableOpacity,
+  StatusBar,
   Dimensions,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { BlurView } from "expo-blur";
+import {
+  Shield,
+  Bell,
+  Lock,
+  HelpCircle,
+  FileText,
+  LogOut,
+  Edit2,
+  Zap,
+  Home,
+  Compass,
+  MessageSquare,
+  User,
+} from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { router } from "expo-router";
 
 const { width } = Dimensions.get("window");
+
+// --- Reusable Components ---
+
+const MenuGroup = ({ title, children }) => (
+  <View style={styles.menuGroup}>
+    {title && <Text style={styles.sectionTitle}>{title}</Text>}
+    <View style={styles.menuContainer}>{children}</View>
+  </View>
+);
+
+const MenuItem = ({ icon: Icon, label, showBorder = true, isLast = false }) => (
+  <TouchableOpacity style={styles.menuItem}>
+    <View style={styles.menuIconContainer}>
+      <Icon size={20} color="#475569" />
+    </View>
+    <View
+      style={[
+        styles.menuTextContainer,
+        !isLast && showBorder && styles.menuBorder,
+      ]}
+    >
+      <Text style={styles.menuText}>{label}</Text>
+    </View>
+  </TouchableOpacity>
+);
+
+// --- Main Component ---
 
 export default function ProfileScreen() {
   return (
     <View style={styles.container}>
-      {/* --- HEADER --- */}
-      {/* Using BlurView to mimic backdrop-blur */}
-      <BlurView intensity={80} tint="light" style={styles.headerContainer}>
-        <SafeAreaView>
-          <View style={styles.headerContent}>
-            <Text style={styles.headerTitle}>Profile</Text>
-            <TouchableOpacity style={styles.boostButton}>
-              <Ionicons
-                name="flash"
-                size={12}
-                color="white"
-                style={{ marginRight: 4 }}
-              />
-              <Text style={styles.boostText}>Boost Profile</Text>
-            </TouchableOpacity>
-          </View>
-        </SafeAreaView>
-      </BlurView>
+      <StatusBar barStyle="dark-content" />
+
+      {/* --- Header --- */}
+      <SafeAreaView style={styles.headerSafeArea}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Profile</Text>
+          <TouchableOpacity style={styles.boostButton}>
+            <Zap size={16} color="white" fill="white" />
+            <Text style={styles.boostText}>Boost Profile</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
 
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Spacer for the fixed header */}
-        <View style={{ height: 110 }} />
-
-        {/* --- AVATAR SECTION --- */}
-        <View style={styles.avatarSection}>
-          <View style={styles.avatarContainer}>
+        {/* --- Profile Image Section --- */}
+        <View style={styles.profileSection}>
+          <View style={styles.imageWrapper}>
             <Image
-              source={{ uri: "https://placehold.co/185x162/png" }}
-              style={styles.avatarImage}
+              source={{
+                uri: "https://drive.google.com/uc?export=view&id=1RWCh-PvPz9DDfnm0zqsajxRloX2ClhmI",
+              }}
+              style={styles.profileImage}
             />
           </View>
 
-          {/* Edit Profile Badge */}
-          <TouchableOpacity style={styles.editProfileBadge}>
-            <Ionicons
-              name="pencil"
-              size={10}
-              color="white"
-              style={{ marginRight: 4 }}
-            />
-            <Text style={styles.editProfileText}>Edit Profile</Text>
+          <TouchableOpacity
+            style={styles.editButton}
+            onPress={() => router.push("/profile/editProfile")}
+          >
+            <Edit2 size={12} color="white" />
+            <Text style={styles.editButtonText}>Edit Profile</Text>
           </TouchableOpacity>
         </View>
 
-        {/* --- PROFILE COMPLETION CARD --- */}
+        {/* --- Completion Card --- */}
         <View style={styles.completionCard}>
-          <View style={styles.completionCircle}>
-            <Text style={styles.completionPercent}>
-              40<Text style={{ fontSize: 14 }}>%</Text>
+          <View style={styles.percentageCircle}>
+            <Text style={styles.percentageText}>
+              40<Text style={styles.percentageSymbol}>%</Text>
             </Text>
           </View>
-          <View style={styles.completionTextContainer}>
+          <View style={styles.completionContent}>
             <Text style={styles.completionTitle}>Complete Your Profile!</Text>
-            <Text style={styles.completionSubtitle}>
+            <Text style={styles.completionDesc}>
               Share your story effortlessly and connect authentically with
               fellow explorers
             </Text>
           </View>
         </View>
 
-        {/* --- SETTINGS GROUP 1 --- */}
-        <View style={styles.sectionTitleContainer}>
-          <Text style={styles.sectionTitle}>Settings</Text>
-        </View>
+        {/* --- Settings Group --- */}
+        <MenuGroup title="Settings">
+          <MenuItem icon={Shield} label="Security" />
+          <MenuItem icon={Bell} label="Notifications" />
+          <MenuItem icon={Lock} label="Privacy" isLast />
+        </MenuGroup>
 
-        <View style={styles.menuGroup}>
-          <MenuItem icon="shield-checkmark-outline" label="Security" />
-          <View style={styles.divider} />
-          <MenuItem icon="notifications-outline" label="Notifications" badge />
-          <View style={styles.divider} />
-          <MenuItem icon="lock-closed-outline" label="Privacy" />
-        </View>
+        {/* --- Support Group --- */}
+        <MenuGroup>
+          <MenuItem icon={HelpCircle} label="Help & Support" />
+          <MenuItem icon={FileText} label="Terms and Policies" isLast />
+        </MenuGroup>
 
-        {/* --- SETTINGS GROUP 2 --- */}
-        <View style={styles.menuGroup}>
-          <MenuItem icon="help-circle-outline" label="Help & Support" />
-          <View style={styles.divider} />
-          <MenuItem icon="document-text-outline" label="Terms and Policies" />
-        </View>
-
-        {/* --- LOGOUT BUTTON --- */}
+        {/* --- Log Out --- */}
         <TouchableOpacity style={styles.logoutButton}>
-          <View style={styles.logoutIconBox}>
-            <Ionicons name="log-out-outline" size={20} color="#DC2626" />
-          </View>
+          <LogOut size={20} color="#dc2626" />
           <Text style={styles.logoutText}>Log out</Text>
         </TouchableOpacity>
-
-        {/* Spacer for Bottom Navigation */}
-        <View style={{ height: 100 }} />
       </ScrollView>
-
-      {/* --- BOTTOM NAVIGATION --- */}
-      <View style={styles.bottomNavContainer}>
-        {/* Background shape */}
-        <View style={styles.bottomNavBackground} />
-
-        <View style={styles.bottomNavContent}>
-          <NavItem icon="map-outline" label="My Trips" />
-          <NavItem icon="compass-outline" label="Explore" />
-          <NavItem icon="search-outline" label="Discover" />
-          <NavItem icon="chatbubble-ellipses-outline" label="Inbox" badge />
-          <NavItem icon="person" label="Profile" active />
-        </View>
-      </View>
     </View>
   );
 }
 
-// --- HELPER COMPONENTS ---
-
-const MenuItem = ({ icon, label, badge }: any) => (
-  <TouchableOpacity style={styles.menuItem}>
-    <View style={styles.menuIconBox}>
-      <Ionicons name={icon} size={20} color="#475569" />
-      {badge && <View style={styles.redDot} />}
-    </View>
-    <Text style={styles.menuText}>{label}</Text>
-    <Ionicons
-      name="chevron-forward"
-      size={16}
-      color="#CBD5E1"
-      style={{ marginLeft: "auto" }}
-    />
-  </TouchableOpacity>
-);
-
-const NavItem = ({ icon, label, active, badge }: any) => (
-  <TouchableOpacity style={styles.navItem}>
-    <View>
-      <Ionicons name={icon} size={24} color={active ? "#EF4444" : "#64748B"} />
-      {badge && <View style={styles.navBadge} />}
-    </View>
-    <Text style={[styles.navLabel, { color: active ? "#EF4444" : "#64748B" }]}>
-      {label}
-    </Text>
-  </TouchableOpacity>
-);
-
-// --- STYLES ---
+// --- Styles ---
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F4F4F5", // zinc-100
+    backgroundColor: "#f4f4f5", // zinc-100
   },
+  scrollContent: {
+    paddingTop: 20,
+    paddingBottom: 120, // Space for bottom nav
+    alignItems: "center",
+  },
+
   // Header
-  headerContainer: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 100,
-    borderBottomWidth: 1,
-    borderBottomColor: "rgba(255,255,255,0.3)",
+  headerSafeArea: {
+    backgroundColor: "rgba(244, 244, 245, 0.9)",
+    zIndex: 10,
   },
-  headerContent: {
+  header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 20,
-    paddingVertical: 15,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
   },
   headerTitle: {
     fontSize: 24,
-    fontWeight: "700", // Semibold
+    fontWeight: "700",
     color: "#083344", // cyan-950
   },
   boostButton: {
-    backgroundColor: "#EF4444", // red-500
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#06b6d4", // cyan-500
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 10,
-    flexDirection: "row",
-    alignItems: "center",
+    gap: 6,
     borderWidth: 3,
-    borderColor: "#F4F4F5",
+    borderColor: "#f4f4f5", // outline-zinc-100
   },
   boostText: {
     color: "white",
@@ -204,46 +181,42 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 
-  // Scroll Content
-  scrollContent: {
-    paddingHorizontal: 16,
-  },
-
-  // Avatar
-  avatarSection: {
+  // Profile Section
+  profileSection: {
     alignItems: "center",
-    marginBottom: 20,
     marginTop: 20,
+    marginBottom: 30,
     position: "relative",
   },
-  avatarContainer: {
+  imageWrapper: {
     width: 140,
     height: 140,
     borderRadius: 70,
     borderWidth: 5,
-    borderColor: "#EF4444", // red-500
+    borderColor: "#ef4444", // red-500
     overflow: "hidden",
-    backgroundColor: "#FFF",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: "#e5e5e5",
   },
-  avatarImage: {
-    width: 140,
-    height: 140,
+  profileImage: {
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
   },
-  editProfileBadge: {
+  editButton: {
     position: "absolute",
-    bottom: -10,
-    backgroundColor: "#FB923C", // orange-400
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 20,
-    borderWidth: 3,
-    borderColor: "#F4F4F5",
+    bottom: -15,
+    backgroundColor: "#fb923c", // orange-400
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
     flexDirection: "row",
     alignItems: "center",
+    gap: 6,
+    borderWidth: 3,
+    borderColor: "#f4f4f5",
+    elevation: 2,
   },
-  editProfileText: {
+  editButtonText: {
     color: "white",
     fontSize: 12,
     fontWeight: "600",
@@ -251,168 +224,153 @@ const styles = StyleSheet.create({
 
   // Completion Card
   completionCard: {
-    backgroundColor: "#FFF",
+    width: width - 40,
+    backgroundColor: "white",
     borderRadius: 16,
     padding: 16,
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 24,
+    marginBottom: 30,
+    marginTop: 10,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 10,
     elevation: 2,
   },
-  completionCircle: {
+  percentageCircle: {
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: "#FB923C", // orange-400
+    backgroundColor: "#fb923c", // orange-400
     justifyContent: "center",
     alignItems: "center",
     marginRight: 16,
   },
-  completionPercent: {
-    color: "#FFF",
+  percentageText: {
+    color: "white",
     fontSize: 20,
     fontWeight: "bold",
   },
-  completionTextContainer: {
+  percentageSymbol: {
+    fontSize: 12,
+  },
+  completionContent: {
     flex: 1,
   },
   completionTitle: {
     fontSize: 16,
-    fontWeight: "700",
+    fontWeight: "600",
     color: "#172554", // blue-950
     marginBottom: 4,
   },
-  completionSubtitle: {
+  completionDesc: {
     fontSize: 12,
-    color: "#6B7280", // gray-500
+    color: "#6b7280", // gray-500
     lineHeight: 16,
   },
 
   // Menu Groups
-  sectionTitleContainer: {
-    marginBottom: 10,
-    paddingLeft: 4,
+  menuGroup: {
+    width: width - 40,
+    marginBottom: 24,
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#172554",
+    color: "#172554", // blue-950
+    marginBottom: 12,
+    marginLeft: 4,
   },
-  menuGroup: {
-    backgroundColor: "#F3F4F6", // gray-100 (closest match to bg-gray-100)
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    marginBottom: 16,
+  menuContainer: {
+    backgroundColor: "#f3f4f6", // gray-100/zinc-100 roughly
+    borderRadius: 8,
+    overflow: "hidden",
   },
   menuItem: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 16,
+    height: 56,
   },
-  menuIconBox: {
-    width: 32,
-    height: 32,
-    borderRadius: 8,
-    backgroundColor: "transparent",
-    justifyContent: "center",
+  menuIconContainer: {
+    width: 50,
     alignItems: "center",
-    marginRight: 12,
-    position: "relative",
+    justifyContent: "center",
+  },
+  menuTextContainer: {
+    flex: 1,
+    height: "100%",
+    justifyContent: "center",
+    paddingRight: 16,
+  },
+  menuBorder: {
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(107, 114, 128, 0.1)", // Subtle divider
   },
   menuText: {
     fontSize: 16,
     color: "#475569", // slate-600
     fontWeight: "500",
   },
-  redDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: "#EF4444",
-    position: "absolute",
-    top: 0,
-    right: 0,
-    borderWidth: 1.5,
-    borderColor: "#F3F4F6",
-  },
-  divider: {
-    height: 1,
-    backgroundColor: "rgba(107, 114, 128, 0.1)", // gray-500/10
-  },
 
-  // Logout
+  // Log Out
   logoutButton: {
+    width: width - 40,
+    height: 56,
     backgroundColor: "rgba(254, 205, 211, 0.3)", // rose-200/30
-    borderRadius: 12,
-    padding: 16,
+    borderRadius: 8,
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 30,
-  },
-  logoutIconBox: {
-    marginRight: 12,
+    paddingHorizontal: 16,
+    marginBottom: 20,
   },
   logoutText: {
-    color: "#DC2626", // red-600
+    color: "#dc2626", // red-600
     fontSize: 16,
     fontWeight: "600",
+    marginLeft: 12,
   },
 
   // Bottom Navigation
-  bottomNavContainer: {
+  bottomNav: {
     position: "absolute",
     bottom: 0,
-    left: 0,
-    right: 0,
-    height: 90,
-    justifyContent: "flex-end",
-  },
-  bottomNavBackground: {
-    position: "absolute",
-    top: 10, // Creates the floating rounded look
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(255,255,255,0.95)",
+    width: "100%",
+    height: 96,
+    backgroundColor: "rgba(255, 255, 255, 0.95)",
     borderTopLeftRadius: 35,
     borderTopRightRadius: 35,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    paddingTop: 20,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.1,
     shadowRadius: 20,
     elevation: 20,
   },
-  bottomNavContent: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-    paddingBottom: 25, // For iPhone home indicator
-    paddingTop: 25,
-    paddingHorizontal: 10,
-  },
   navItem: {
     alignItems: "center",
-    justifyContent: "center",
     width: 60,
   },
-  navLabel: {
-    fontSize: 10,
-    marginTop: 4,
+  navText: {
+    fontSize: 11,
+    color: "#6b7280",
+    marginTop: 6,
+  },
+  activeNavText: {
+    fontSize: 11,
+    color: "#ef4444",
+    marginTop: 6,
     fontWeight: "500",
   },
-  navBadge: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: "#EF4444",
+  activeTabIndicator: {
     position: "absolute",
-    top: -2,
-    right: -2,
-    borderWidth: 1,
-    borderColor: "#FFF",
+    top: -14, // lifts slightly above container
+    right: width * 0.08, // Positioning based on design (approx 4th item)
+    width: 80,
+    height: 80,
+    backgroundColor: "#fff7ed", // orange-50
+    borderRadius: 20,
+    zIndex: -1,
   },
 });

@@ -1,450 +1,610 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   View,
   Text,
   Image,
-  StyleSheet,
   ScrollView,
+  StyleSheet,
   TouchableOpacity,
   TextInput,
-  Switch,
-  Platform,
+  Dimensions,
   StatusBar,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import {
+  ArrowLeft,
+  Bell,
+  Search,
+  SlidersHorizontal,
+  Calendar,
+  MapPin,
+  MoreVertical,
+  Lock,
+  Plus,
+  Compass,
+  MessageSquare,
+  User,
+  Map, // Using Map icon for "My Trips"
+} from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function EditProfileScreen() {
-  const [isVisible, setIsVisible] = useState(true);
-  const [name, setName] = useState("War");
-  const [email, setEmail] = useState("warrenstravel@gmail.com");
-  const [answer1, setAnswer1] = useState(
-    "Teleport to Santorini, Greece: The picturesque landscapes, crystal-clear blue waters, and charming white-washed buildings make it a dream destination",
-  );
+const { width } = Dimensions.get("window");
 
-  return (
-    <SafeAreaView style={styles.container}>
-      {/* Custom Header */}
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.headerBtn}>
-          <Text style={styles.headerBackText}>Back</Text>
-        </TouchableOpacity>
+// --- Components ---
 
-        <View style={styles.headerTitleContainer}>
-          <Text style={styles.headerName}>John Doe</Text>
-          <Text style={styles.headerStatus}>40% Complete</Text>
+const BottomTabItem = ({ icon: Icon, label, isActive }) => (
+  <TouchableOpacity style={styles.tabItem}>
+    <View
+      style={[styles.tabIconWrapper, isActive && styles.tabIconWrapperActive]}
+    >
+      <Icon size={24} color={isActive ? "#ef4444" : "#64748b"} />
+    </View>
+    <Text style={[styles.tabLabel, isActive && styles.tabLabelActive]}>
+      {label}
+    </Text>
+  </TouchableOpacity>
+);
+
+const TripCard = ({
+  title,
+  date,
+  imageUri,
+  isActive,
+  isLocked,
+  travelers = [],
+}) => (
+  <View style={styles.cardContainer}>
+    {/* Card Image Header */}
+    <View style={styles.cardHeader}>
+      <Image source={{ uri: imageUri }} style={styles.cardImage} />
+
+      {/* Overlay for Locked State */}
+      {isLocked && (
+        <View style={styles.lockedOverlay}>
+          <View style={styles.lockIconContainer}>
+            <Lock size={32} color="#fff" />
+          </View>
         </View>
+      )}
 
-        <TouchableOpacity style={styles.headerBtn}>
-          <Text style={styles.headerDoneText}>Done</Text>
-        </TouchableOpacity>
+      {/* Active Badge (Only show if not locked and is active) */}
+      {!isLocked && isActive && (
+        <View style={styles.activeBadge}>
+          <View style={styles.activeDot} />
+          <Text style={styles.activeText}>Active</Text>
+        </View>
+      )}
+
+      {/* Menu Button */}
+      <TouchableOpacity style={styles.menuButton}>
+        <MoreVertical size={16} color="#475569" />
+      </TouchableOpacity>
+    </View>
+
+    {/* Card Body */}
+    <View style={styles.cardBody}>
+      <Text style={styles.cardTitle}>{title}</Text>
+
+      <View style={styles.cardDateRow}>
+        <Calendar size={14} color="#334155" />
+        <Text style={styles.cardDateText}>{date}</Text>
       </View>
+
+      {/* Footer Area */}
+      <View style={styles.cardFooter}>
+        {isLocked ? (
+          <TouchableOpacity style={styles.viewItineraryLocked}>
+            <Text style={styles.viewItineraryTextLocked}>View Itinerary</Text>
+            <Lock size={12} color="#ef4444" style={{ marginLeft: 4 }} />
+          </TouchableOpacity>
+        ) : (
+          <>
+            {/* Travelers Stack */}
+            <View style={styles.travelerStack}>
+              {[1, 2, 3].map((_, i) => (
+                <Image
+                  key={i}
+                  source={{ uri: `https://placehold.co/24x24?text=${i + 1}` }}
+                  style={[styles.travelerAvatar, { left: i * 14, zIndex: i }]}
+                />
+              ))}
+              <View style={[styles.moreTravelers, { left: 42, zIndex: 10 }]}>
+                <Text style={styles.moreTravelersText}>2+</Text>
+              </View>
+              <Text style={styles.travelerLabel}>Travelers</Text>
+            </View>
+
+            <TouchableOpacity style={styles.viewItineraryBtn}>
+              <MapPin size={12} color="#ef4444" />
+              <Text style={styles.viewItineraryText}>View Itinerary</Text>
+            </TouchableOpacity>
+          </>
+        )}
+      </View>
+    </View>
+  </View>
+);
+
+// --- Main Screen ---
+
+export default function MyTripsScreen() {
+  return (
+    <View style={styles.container}>
+      <StatusBar barStyle="dark-content" />
+
+      {/* Header */}
+      <SafeAreaView style={styles.headerSafeArea}>
+        <View style={styles.headerContainer}>
+          <TouchableOpacity style={styles.iconButton}>
+            <ArrowLeft size={24} color="#172554" />
+          </TouchableOpacity>
+
+          <View style={styles.headerTitleContainer}>
+            <Text style={styles.headerTitle}>My Trips</Text>
+            <Text style={styles.headerSubtitle}>📍 Cebu, Philippines 🇵🇭</Text>
+          </View>
+
+          <TouchableOpacity style={styles.iconButton}>
+            <Bell size={24} color="#172554" />
+            <View style={styles.notificationDot} />
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
 
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* --- VISIBILITY CARD --- */}
-        <View style={styles.visibilityCard}>
-          <View style={styles.visTextContainer}>
-            <Text style={styles.visTitle}>Profile Visibility</Text>
-            <Text style={styles.visSubtitle}>
-              Your profile is currently visible to all Suroy users
+        {/* Search & Filter */}
+        <View style={styles.searchRow}>
+          <View style={styles.searchContainer}>
+            <Search size={16} color="#94a3b8" style={{ marginRight: 8 }} />
+            <TextInput
+              placeholder="Search for a trip..."
+              placeholderTextColor="#d6d3d1"
+              style={styles.searchInput}
+            />
+          </View>
+          <TouchableOpacity style={styles.filterButton}>
+            <SlidersHorizontal size={20} color="#475569" />
+          </TouchableOpacity>
+        </View>
+
+        {/* Toggle Switch */}
+        <View style={styles.toggleContainer}>
+          <TouchableOpacity style={styles.toggleBtnActive}>
+            <Text style={styles.toggleTextActive}>Upcoming</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.toggleBtnInactive}>
+            <Text style={styles.toggleTextInactive}>Past</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Trip Cards */}
+        <View style={styles.cardsContainer}>
+          {/* Card 1: Active */}
+          <TripCard
+            title="Bantayan Island Travel"
+            date="3 Feb - 14 Feb"
+            imageUri="https://placehold.co/385x289"
+            isActive={true}
+            isLocked={false}
+          />
+
+          {/* Card 2: Locked */}
+          <View style={styles.lockedCardWrapper}>
+            <TripCard
+              title="Cebu City"
+              date="3 Feb - 14 Feb"
+              imageUri="https://placehold.co/385x256"
+              isActive={false}
+              isLocked={true}
+            />
+            {/* Upsell Text */}
+            <Text style={styles.upsellText}>
+              Want to add more trips? Upgrade Suroy Now!
             </Text>
           </View>
-          <View style={styles.visToggleContainer}>
-            <Switch
-              trackColor={{ false: "#767577", true: "#4ADE80" }} // green-400
-              thumbColor={"#f4f3f4"}
-              onValueChange={setIsVisible}
-              value={isVisible}
-            />
-          </View>
         </View>
 
-        {/* --- PROFILE PICTURE --- */}
-        <View style={styles.section}>
-          <Text style={styles.label}>Profile Picture</Text>
-          <View style={styles.avatarContainer}>
-            <View style={styles.avatarWrapper}>
-              <Image
-                source={{ uri: "https://placehold.co/236x355/png" }}
-                style={styles.avatar}
-              />
-              {/* Dark Overlay */}
-              <View style={styles.avatarOverlay} />
-            </View>
-
-            {/* Camera Icon Button */}
-            <TouchableOpacity style={styles.cameraBtn}>
-              <Ionicons name="camera" size={20} color="#FFF" />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* --- FORM FIELDS --- */}
-        <View style={styles.section}>
-          <Text style={styles.label}>Name</Text>
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              value={name}
-              onChangeText={setName}
-            />
-          </View>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.label}>Email</Text>
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-            />
-          </View>
-        </View>
-
-        {/* --- PICTURES GRID --- */}
-        <View style={styles.section}>
-          <Text style={styles.label}>Pictures</Text>
-          <View style={styles.grid}>
-            {/* Photo 1 */}
-            <View style={styles.gridItem}>
-              <Image
-                source={{ uri: "https://placehold.co/274x118/png" }}
-                style={styles.gridImage}
-              />
-              <Text style={styles.imgCaption} numberOfLines={1}>
-                🏖️ Suits, Sand, and...
-              </Text>
-              <TouchableOpacity style={styles.deleteBtn}>
-                <Ionicons name="trash" size={12} color="#DC2626" />
-              </TouchableOpacity>
-            </View>
-
-            {/* Photo 2 */}
-            <View style={styles.gridItem}>
-              <Image
-                source={{ uri: "https://placehold.co/231x154/png" }}
-                style={styles.gridImage}
-              />
-              <TouchableOpacity style={styles.deleteBtn}>
-                <Ionicons name="trash" size={12} color="#DC2626" />
-              </TouchableOpacity>
-            </View>
-
-            {/* Photo 3 */}
-            <View style={styles.gridItem}>
-              <Image
-                source={{ uri: "https://placehold.co/188x282/png" }}
-                style={styles.gridImage}
-              />
-              <TouchableOpacity style={styles.deleteBtn}>
-                <Ionicons name="trash" size={12} color="#DC2626" />
-              </TouchableOpacity>
-            </View>
-
-            {/* Add Photo Button */}
-            <TouchableOpacity style={[styles.gridItem, styles.addPhotoBtn]}>
-              <Ionicons name="add" size={32} color="#D6D3D1" />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* --- PROFILE ANSWERS --- */}
-        <View style={styles.section}>
-          <Text style={styles.label}>Profile Answers</Text>
-
-          {/* Answer Card 1 (Filled) */}
-          <View style={styles.answerCard}>
-            <View style={styles.answerHeader}>
-              <Text style={styles.promptText}>Teleport for a day, where?</Text>
-              <TouchableOpacity style={styles.editPromptIcon}>
-                <Ionicons name="pencil" size={12} color="#FB923C" />
-              </TouchableOpacity>
-            </View>
-            <Text style={styles.answerText}>{answer1}</Text>
-          </View>
-
-          {/* Answer Card 2 (Empty) */}
-          <TouchableOpacity style={styles.answerCard}>
-            <View style={styles.answerHeader}>
-              <Text style={styles.emptyPromptText}>Tap to select a prompt</Text>
-              <View style={styles.editPromptIcon}>
-                <Ionicons name="add" size={14} color="#FFF" />
-              </View>
-            </View>
-            <Text style={styles.emptyAnswerText}>and answer it</Text>
-          </TouchableOpacity>
-
-          {/* Answer Card 3 (Empty) */}
-          <TouchableOpacity style={styles.answerCard}>
-            <View style={styles.answerHeader}>
-              <Text style={styles.emptyPromptText}>Tap to select a prompt</Text>
-              <View style={styles.editPromptIcon}>
-                <Ionicons name="add" size={14} color="#FFF" />
-              </View>
-            </View>
-            <Text style={styles.emptyAnswerText}>and answer it</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Bottom padding for scrolling */}
-        <View style={{ height: 40 }} />
+        {/* Spacer for FAB and Bottom Nav */}
+        <View style={{ height: 120 }} />
       </ScrollView>
-    </SafeAreaView>
+
+      {/* Floating Action Button */}
+      <TouchableOpacity style={styles.fab}>
+        <Plus size={32} color="#fff" />
+      </TouchableOpacity>
+
+      {/* Bottom Navigation */}
+      <View style={styles.bottomNav}>
+        <BottomTabItem icon={Map} label="My Trips" isActive={true} />
+        <BottomTabItem icon={Compass} label="Discover" isActive={false} />
+        <BottomTabItem icon={MessageSquare} label="Inbox" isActive={false} />
+        <BottomTabItem icon={User} label="Profile" isActive={false} />
+      </View>
+    </View>
   );
 }
+
+// --- Styles ---
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F4F4F5", // zinc-100
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-  },
-  scrollContent: {
-    paddingHorizontal: 20,
-    paddingTop: 10,
+    backgroundColor: "#f4f4f5", // zinc-100
   },
 
   // Header
-  header: {
+  headerSafeArea: {
+    backgroundColor: "rgba(244, 244, 245, 0.9)",
+    zIndex: 10,
+  },
+  headerContainer: {
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    backgroundColor: "#F4F4F5",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
-  },
-  headerBtn: {
-    padding: 5,
-  },
-  headerBackText: {
-    fontSize: 16,
-    color: "#172554", // blue-950
-    textDecorationLine: "underline",
-    fontWeight: "500",
-  },
-  headerDoneText: {
-    fontSize: 16,
-    color: "#172554",
-    textDecorationLine: "underline",
-    fontWeight: "500",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
   headerTitleContainer: {
     alignItems: "center",
   },
-  headerName: {
+  headerTitle: {
     fontSize: 20,
-    fontWeight: "bold",
-    color: "#172554",
-  },
-  headerStatus: {
-    fontSize: 16,
-    color: "#EF4444", // red-500
-    fontWeight: "500",
-  },
-
-  // Visibility Card
-  visibilityCard: {
-    backgroundColor: "#F3F4F6", // gray-100
-    borderRadius: 12,
-    padding: 16,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 25,
-    marginTop: 10,
-    shadowColor: "#030096",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.02,
-    shadowRadius: 27,
-    elevation: 2,
-  },
-  visTextContainer: {
-    flex: 1,
-    paddingRight: 10,
-  },
-  visTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#172554",
+    fontWeight: "800", // Hanken Grotesk Bold
+    color: "#083344", // cyan-950
     marginBottom: 4,
   },
-  visSubtitle: {
-    fontSize: 12,
-    color: "#6B7280",
-    lineHeight: 16,
+  headerSubtitle: {
+    fontSize: 14,
+    color: "#334155", // slate-700
   },
-  visToggleContainer: {
+  iconButton: {
+    width: 44,
+    height: 44,
+    backgroundColor: "#fff",
+    borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
   },
-
-  // Section Global
-  section: {
-    marginBottom: 24,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: "#475569", // slate-600
-    marginBottom: 12,
-    marginLeft: 4,
-  },
-
-  // Avatar
-  avatarContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-    position: "relative",
-    alignSelf: "flex-start", // Keeps it left aligned like design
-    marginLeft: 10,
-  },
-  avatarWrapper: {
-    width: 112, // w-28
-    height: 112,
-    borderRadius: 56,
-    borderWidth: 4,
-    borderColor: "#EF4444", // red-500
-    overflow: "hidden",
-  },
-  avatar: {
-    width: "100%",
-    height: "100%",
-  },
-  avatarOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.3)",
-  },
-  cameraBtn: {
+  notificationDot: {
     position: "absolute",
-    bottom: 0,
-    right: 0,
-    backgroundColor: "rgba(0,0,0,0.6)",
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 2,
-    borderColor: "#FFF",
+    top: 10,
+    right: 12,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "#ef4444",
+    borderWidth: 1,
+    borderColor: "#fff",
   },
 
-  // Inputs
-  inputContainer: {
-    backgroundColor: "#FFF",
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "transparent", // The design had Field-Color which implies white/input bg
-    overflow: "hidden",
-    height: 56, // h-14
-    justifyContent: "center",
-    paddingHorizontal: 16,
+  // Search
+  scrollContent: {
+    paddingTop: 16,
   },
-  input: {
-    fontSize: 16,
-    color: "#475569",
+  searchRow: {
+    flexDirection: "row",
+    paddingHorizontal: 20,
+    gap: 12,
+    marginBottom: 20,
+  },
+  searchContainer: {
+    flex: 1,
+    height: 48,
+    backgroundColor: "#fff",
+    borderRadius: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    shadowColor: "#030096",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.07,
+    shadowRadius: 20,
+    elevation: 3,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 14,
+    color: "#334155",
+  },
+  filterButton: {
+    width: 48,
+    height: 48,
+    backgroundColor: "#fff",
+    borderRadius: 14,
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#030096",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.07,
+    shadowRadius: 20,
+    elevation: 3,
+  },
+
+  // Toggle
+  toggleContainer: {
+    marginHorizontal: 20,
+    backgroundColor: "#f3f4f6", // gray-100
+    borderRadius: 8,
+    padding: 4,
+    flexDirection: "row",
+    marginBottom: 24,
+    borderWidth: 1,
+    borderColor: "#e5e7eb",
+  },
+  toggleBtnActive: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    backgroundColor: "#ef4444",
+    borderRadius: 6,
+    shadowColor: "#02006d",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 2,
+  },
+  toggleTextActive: {
+    color: "#fff",
+    fontSize: 13,
+    fontWeight: "600",
+  },
+  toggleBtnInactive: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    flex: 1,
+    alignItems: "center",
+  },
+  toggleTextInactive: {
+    color: "#6b7280",
+    fontSize: 13,
     fontWeight: "500",
   },
 
-  // Grid
-  grid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 12,
+  // Cards
+  cardsContainer: {
+    paddingHorizontal: 20,
+    gap: 24,
   },
-  gridItem: {
-    width: "48%", // Approx half width
-    aspectRatio: 1,
+  cardContainer: {
+    backgroundColor: "#f3f4f6", // gray-100
     borderRadius: 16,
-    backgroundColor: "#F3F4F6",
     overflow: "hidden",
-    position: "relative",
-    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: "#e5e7eb",
+    shadowColor: "#5c7e84",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
   },
-  gridImage: {
+  cardHeader: {
+    height: 140,
+    position: "relative",
+  },
+  cardImage: {
     width: "100%",
     height: "100%",
     resizeMode: "cover",
   },
-  imgCaption: {
+  menuButton: {
     position: "absolute",
-    bottom: 10,
-    left: 10,
-    right: 10,
-    fontSize: 12,
-    color: "#475569",
-    backgroundColor: "rgba(255,255,255,0.8)",
-    paddingHorizontal: 4,
-    borderRadius: 4,
-    overflow: "hidden",
-  },
-  deleteBtn: {
-    position: "absolute",
-    top: 8,
-    right: 8,
-    width: 32,
-    height: 32,
-    backgroundColor: "#FDA4AF", // rose-300
+    top: 12,
+    right: 12,
+    backgroundColor: "#fff",
+    padding: 6,
     borderRadius: 8,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 3,
-    borderColor: "#F4F4F5",
+    zIndex: 20,
   },
-  addPhotoBtn: {
+  activeBadge: {
+    position: "absolute",
+    top: 12,
+    left: 12,
+    backgroundColor: "#fff",
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 8,
+    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: "#D6D3D1", // stone-300
+    gap: 6,
+  },
+  activeDot: {
+    width: 2,
+    height: 10,
+    backgroundColor: "#475569",
+  },
+  activeText: {
+    fontSize: 10,
+    fontWeight: "800",
+    color: "#ef4444",
+    textTransform: "uppercase",
   },
 
-  // Profile Answers
-  answerCard: {
-    backgroundColor: "#FFF",
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: "#D6D3D1",
+  // Locked State
+  lockedOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 10,
   },
-  answerHeader: {
+  lockIconContainer: {
+    width: 60,
+    height: 60,
+    backgroundColor: "rgba(239, 68, 68, 0.9)", // red
+    borderRadius: 30,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "rgba(255,255,255,0.2)",
+  },
+  lockedCardWrapper: {
+    gap: 12,
+  },
+  upsellText: {
+    textAlign: "center",
+    color: "#083344", // slightly darker for readability vs white/zinc
+    fontWeight: "700",
+    fontSize: 14,
+    marginTop: 8,
+    opacity: 0.8,
+  },
+
+  // Card Body
+  cardBody: {
+    padding: 16,
+    paddingBottom: 12,
+  },
+  cardTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#172554",
+    marginBottom: 6,
+  },
+  cardDateRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    marginBottom: 16,
+  },
+  cardDateText: {
+    fontSize: 12,
+    color: "#334155",
+  },
+  cardFooter: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 8,
+    borderTopWidth: 1,
+    borderTopColor: "#e5e7eb",
+    paddingTop: 12,
+    minHeight: 32,
   },
-  promptText: {
-    fontSize: 16,
-    color: "#172554", // blue-950
-    flex: 1,
-    marginRight: 10,
+  viewItineraryBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
   },
-  emptyPromptText: {
-    fontSize: 16,
-    color: "#475569",
+  viewItineraryLocked: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    opacity: 0.6,
+  },
+  viewItineraryText: {
+    fontSize: 12,
+    color: "#ef4444",
     fontWeight: "500",
   },
-  editPromptIcon: {
+  viewItineraryTextLocked: {
+    fontSize: 12,
+    color: "#ef4444",
+    fontWeight: "500",
+  },
+
+  // Travelers
+  travelerStack: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: 120, // ample space
+    height: 24,
+  },
+  travelerAvatar: {
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: "#FDE68A", // very light orange
-    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#ef4444",
+    position: "absolute",
+  },
+  moreTravelers: {
+    position: "absolute",
+    height: 20,
+    paddingHorizontal: 6,
+    backgroundColor: "#fecdd3", // rose-200
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#ef4444",
     justifyContent: "center",
+    alignItems: "center",
+    top: 2,
   },
-  answerText: {
-    fontSize: 12,
-    color: "#475569",
-    lineHeight: 18,
+  moreTravelersText: {
+    fontSize: 10,
+    fontWeight: "700",
+    color: "#083344",
   },
-  emptyAnswerText: {
+  travelerLabel: {
+    marginLeft: 75,
     fontSize: 12,
-    color: "#6B7280",
+    color: "#083344",
+    fontWeight: "500",
+  },
+
+  // FAB
+  fab: {
+    position: "absolute",
+    bottom: 110, // Above Nav
+    right: 20,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: "#ef4444",
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#dc2626",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    elevation: 8,
+    borderWidth: 4,
+    borderColor: "rgba(255,255,255,0.1)",
+  },
+
+  // Bottom Nav
+  bottomNav: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 90,
+    backgroundColor: "rgba(255,255,255,0.95)",
+    borderTopLeftRadius: 35,
+    borderTopRightRadius: 35,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "flex-start",
+    paddingTop: 16,
+    paddingHorizontal: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 10,
+  },
+  tabItem: {
+    alignItems: "center",
+    gap: 6,
+    width: 60,
+  },
+  tabIconWrapper: {
+    padding: 6,
+    borderRadius: 12,
+  },
+  tabIconWrapperActive: {
+    backgroundColor: "#fff7ed", // orange-50
+  },
+  tabLabel: {
+    fontSize: 10,
+    color: "#64748b",
+    fontWeight: "500",
+  },
+  tabLabelActive: {
+    color: "#ef4444",
   },
 });

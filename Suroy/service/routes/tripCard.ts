@@ -7,6 +7,7 @@ import {
   query,
   where,
   getDocs,
+  Timestamp,
 } from "firebase/firestore";
 import getUser from "../authDB";
 import { db } from "@/FirebaseConfig";
@@ -14,6 +15,7 @@ import { db } from "@/FirebaseConfig";
 export type tripCardContent = {
   id: string;
   title: string;
+  imageUri: string;
   location: string;
   startDate: Date;
   endDate: Date;
@@ -21,6 +23,7 @@ export type tripCardContent = {
   maxBudget: number;
   isComplete: Boolean;
   createdAt: Date;
+  isActive: Boolean;
 };
 
 export const addTripCard = async (tripContent: tripCardContent) => {
@@ -30,13 +33,15 @@ export const addTripCard = async (tripContent: tripCardContent) => {
     userId: user.uid, // 👈 Attached automatically
     id: tripContent.id,
     title: tripContent.title,
+    imageUri: tripContent.imageUri,
     location: tripContent.location,
     startDate: tripContent.startDate,
     endDate: tripContent.endDate,
     minBudget: tripContent.minBudget,
-    maxBudgget: tripContent.maxBudget,
+    maxBudget: tripContent.maxBudget,
     isComplete: tripContent.isComplete,
     createdAt: tripContent.createdAt,
+    isActive: tripContent.isActive,
   });
 };
 
@@ -46,11 +51,36 @@ export const getTripCard = async () => {
 
   const q = query(
     collection(db, "tripCards"),
-    where("userId", "==", user.uid), // 👈 Filter automatically
+    // where("userId", "==", user.uid), // 👈 Filter automatically
   );
 
   const snapshot = await getDocs(q);
-  return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+  return snapshot.docs.map((doc) => {
+    const data = doc.data();
+
+    return {
+      id: doc.id,
+      title: data.title,
+      imageUri: data.imageUri,
+      location: data.location,
+      startDate:
+        data.startDate instanceof Timestamp
+          ? data.startDate.toDate()
+          : data.startDate,
+      endDate:
+        data.endDate instanceof Timestamp
+          ? data.endDate.toDate()
+          : data.endDate,
+      createdAt:
+        data.createdAt instanceof Timestamp
+          ? data.createdAt.toDate()
+          : data.createdAt,
+      minBudget: data.minBudget,
+      maxBudget: data.maxBudget, // Note: Watch your spelling (maxBudgget vs maxBudget)
+      isComplete: data.isComplete,
+      isActive: data.isActive,
+    } as tripCardContent;
+  });
 };
 
 export const updateTripCard = async (taskId: string, updatedData: object) => {

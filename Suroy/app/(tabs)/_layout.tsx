@@ -17,7 +17,7 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="myTrips/index"
+        name="myTrips"
         options={{
           title: "My Trips",
           tabBarIcon: ({ color, focused }) => (
@@ -30,7 +30,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="discover/index"
+        name="discover"
         options={{
           title: "Discover",
           tabBarIcon: ({ color, focused }) => (
@@ -43,7 +43,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="chat/index"
+        name="chat"
         options={{
           title: "Chat",
           tabBarIcon: ({ color, focused }) => (
@@ -56,7 +56,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="favourites/index"
+        name="favourites"
         options={{
           title: "Favourites",
           tabBarIcon: ({ color, focused }) => (
@@ -69,7 +69,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="profile/index"
+        name="profile"
         options={{
           title: "Profile",
           tabBarIcon: ({ color, focused }) => (

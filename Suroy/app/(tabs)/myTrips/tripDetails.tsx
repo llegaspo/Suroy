@@ -1,367 +1,535 @@
-import React from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
+import React, { useState } from "react";
 import {
   View,
   Text,
   Image,
+  StyleSheet,
   ScrollView,
   TouchableOpacity,
-  StyleSheet,
-  Platform,
-  StatusBar,
   Dimensions,
+  StatusBar,
+  Alert,
 } from "react-native";
 import {
   ChevronLeft,
   Bell,
   MoreVertical,
+  Flag,
+  Share,
   MapPin,
-  Calendar,
-  CreditCard,
-  MapPin as MapIcon, // Alias for bottom nav
+  Home,
   Compass,
-  MessageSquare,
+  MessageCircle,
   User,
+  Calendar,
+  Clock,
+  ChevronRight,
+  LogOut,
 } from "lucide-react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const { width } = Dimensions.get("window");
 
-export default function tripDetails() {
+// --- Mock Data ---
+const GENERAL_INTERESTS = [
+  { label: "🏝️ Island Hopper" },
+  { label: "🌿 Calm" },
+  { label: "🐚 Beach Lover" },
+  { label: "👥 Group Travel" },
+  { label: "🧭 Adventurous" },
+];
+
+const MATCHED_INTERESTS = [
+  { label: "🏝️ Island Hopper" },
+  { label: "🌿 Calm" },
+  { label: "💰 Budget Range Friendly" },
+];
+
+const DIFFERING_INTERESTS = [
+  { label: "🧭 Adventurous" },
+  { label: "👥 Group Travel" },
+];
+
+const AVATARS = [
+  "https://placehold.co/50x50",
+  "https://placehold.co/50x50",
+  "https://placehold.co/50x50",
+  "https://placehold.co/50x50",
+  "https://placehold.co/50x50",
+];
+
+const SUGGESTED_TRIPS = [
+  {
+    id: 1,
+    image: "https://placehold.co/322x181",
+    title: "Retreat in Sigtuna",
+    desc: "Immerse yourself in art and history in the charming town.",
+    readTime: "4 min read",
+  },
+  {
+    id: 2,
+    image: "https://placehold.co/160x116",
+    title: "Trail in Uppsala",
+    desc: "Indulge in the Swedish tradition of fika with a day in Uppsala.",
+    readTime: "2 min read",
+  },
+  {
+    id: 3,
+    image: "https://placehold.co/160x107",
+    title: "Day in Eskilstuna",
+    desc: "Explore galleries for a day of cultural enrichment.",
+    readTime: "6 min read",
+  },
+];
+
+export default function AboutTripScreen() {
+  // Toggle this to see the "Joined" vs "Not Joined" view
+  const [isJoined, setIsJoined] = useState(true);
+  const [menuVisible, setMenuVisible] = useState(false);
+
+  // Handle Join/Leave Logic
+  const handleTripAction = () => {
+    if (isJoined) {
+      Alert.alert("Leave Trip", "Are you sure you want to leave this trip?", [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Leave",
+          style: "destructive",
+          onPress: () => setIsJoined(false),
+        },
+      ]);
+    } else {
+      setIsJoined(true);
+    }
+  };
+
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
-
-      {/* --- Header --- */}
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.iconButton}>
-          <ChevronLeft size={24} color="#172554" />
-        </TouchableOpacity>
-
-        <Text style={styles.headerTitle}>About Trip</Text>
-
-        <TouchableOpacity style={styles.iconButton}>
-          <Bell size={24} color="#172554" />
-          <View style={styles.notificationDot} />
-        </TouchableOpacity>
-      </View>
 
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* --- Hero Image Section --- */}
+        <View style={{ height: 100 }} />
+
+        {/* --- Hero Section --- */}
         <View style={styles.heroContainer}>
-          <View style={styles.heroImageWrapper}>
-            <Image
-              source={{ uri: "https://placehold.co/383x287" }}
-              style={styles.heroImage}
-              resizeMode="cover"
-            />
+          <Image
+            source={{ uri: "https://placehold.co/383x287" }}
+            style={styles.heroImage}
+          />
 
-            {/* Active Badge */}
-            <View style={styles.activeBadge}>
-              <View style={styles.activeDot} />
-              <Text style={styles.activeText}>Active</Text>
-            </View>
-
-            {/* Menu Button */}
-            <TouchableOpacity style={styles.menuButton}>
-              <MoreVertical size={20} color="#475569" />
-            </TouchableOpacity>
+          <View style={styles.activeBadge}>
+            <View style={styles.activeDot} />
+            <Text style={styles.activeText}>Active</Text>
           </View>
+
+          {/* 3-Dots Menu */}
+          <TouchableOpacity
+            style={styles.menuButton}
+            onPress={() => setMenuVisible(!menuVisible)}
+            activeOpacity={0.8}
+          >
+            <MoreVertical size={20} color="#475569" />
+          </TouchableOpacity>
+
+          {/* Conditional Menu */}
+          {menuVisible && (
+            <View style={styles.popupMenu}>
+              <TouchableOpacity style={styles.menuItem}>
+                <Flag size={16} color="#ef4444" style={styles.menuIcon} />
+                <Text style={styles.menuText}>Report Trip</Text>
+              </TouchableOpacity>
+              <View style={styles.menuDivider} />
+              <TouchableOpacity style={styles.menuItem}>
+                <Share size={16} color="#ef4444" style={styles.menuIcon} />
+                <Text style={styles.menuText}>Share Trip</Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
 
-        {/* --- Trip Title & Info --- */}
+        {/* --- Trip Info Header --- */}
         <View style={styles.infoSection}>
-          <Text style={styles.tripTitle}>Bantayan Island Travel</Text>
+          <Text style={styles.tripTitle}>Bantayan Island, Cebu</Text>
 
-          <View style={styles.metaRow}>
-            <Calendar size={14} color="#083344" />
-            <Text style={styles.metaText}>
+          <View style={styles.row}>
+            <Calendar size={14} color="#083344" style={{ marginRight: 6 }} />
+            <Text style={styles.subText}>
               February 3, 2025 - February 6, 2025
             </Text>
           </View>
 
-          <View style={styles.metaRow}>
-            <Text style={styles.flagEmoji}>🇵🇭</Text>
-            <Text style={styles.locationText}>Bantayan Island, Cebu</Text>
-          </View>
-
-          <View style={styles.metaRow}>
-            <Text style={styles.budgetEmoji}>💰</Text>
-            <Text style={styles.metaText}>
-              Budget Range: Php 3,000 - Php 6,000
+          <View style={styles.row}>
+            <Text style={{ fontSize: 14, marginRight: 4 }}>🇵🇭</Text>
+            <Text style={styles.subText}>
+              Cebu, Philippines [Map of Bantayan Island Cebu]
             </Text>
           </View>
-        </View>
 
-        {/* --- Members & Progress --- */}
-        <View style={styles.membersSection}>
-          <View style={styles.avatarsRow}>
-            {[1, 2, 3, 4, 5].map((_, index) => (
+          <Text style={[styles.subText, { marginTop: 4 }]}>
+            💰 Budget Range: Php 3,000 - Php 6,000
+          </Text>
+
+          <View style={styles.redDivider} />
+
+          {/* About Section */}
+          <Text style={styles.sectionHeader}>About the Trip</Text>
+          <Text style={styles.paragraph}>
+            This trip covers exploring the Northern Part of Cebu which is
+            Bantayan Island! It’s going to be a 4-day travel so join if you are
+            interested and you might know some other spots we can visit to 😁
+          </Text>
+
+          {/* --- CONDITIONAL CONTENT START --- */}
+
+          {isJoined ? (
+            /* === VIEW 1: USER IS JOINED === */
+            <View style={styles.joinedContainer}>
+              <Text style={styles.matchScoreText}>
+                You match this group{" "}
+                <Text style={{ fontWeight: "800" }}>72%</Text> based on vibe &
+                preferences:
+              </Text>
+
+              {/* Matched Interests (Cyan) */}
+              <View style={styles.interestContainer}>
+                {MATCHED_INTERESTS.map((item, index) => (
+                  <View
+                    key={index}
+                    style={[styles.interestChip, styles.chipCyan]}
+                  >
+                    <Text style={styles.interestText}>{item.label}</Text>
+                  </View>
+                ))}
+              </View>
+
+              <Text style={styles.diffHeader}>Slight differences in:</Text>
+
+              {/* Differing Interests (Gray) */}
+              <View style={styles.interestContainer}>
+                {DIFFERING_INTERESTS.map((item, index) => (
+                  <View
+                    key={index}
+                    style={[styles.interestChip, styles.chipGray]}
+                  >
+                    <Text style={styles.interestText}>{item.label}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          ) : (
+            /* === VIEW 2: USER IS NOT JOINED === */
+            <View>
+              <Text style={styles.sectionHeader}>Interests</Text>
+              <View style={styles.interestContainer}>
+                {GENERAL_INTERESTS.map((item, index) => (
+                  <View
+                    key={index}
+                    style={[styles.interestChip, styles.chipRose]}
+                  >
+                    <Text style={styles.interestText}>{item.label}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          )}
+          {/* --- CONDITIONAL CONTENT END --- */}
+
+          {/* Travelers Section */}
+          <Text style={[styles.sectionHeader, { marginTop: 24 }]}>
+            Travelers
+          </Text>
+          <Text style={[styles.paragraph, { marginBottom: 8 }]}>
+            💗 5 out of 8 People have joined for this trip
+          </Text>
+          <View style={styles.avatarRow}>
+            {AVATARS.map((uri, index) => (
               <Image
                 key={index}
-                source={{ uri: "https://placehold.co/32x34" }}
+                source={{ uri }}
                 style={[
                   styles.avatar,
-                  { marginLeft: index === 0 ? 0 : -10, zIndex: 5 - index },
+                  { marginLeft: index === 0 ? 0 : -12, zIndex: 10 - index },
                 ]}
               />
             ))}
           </View>
 
-          <View style={styles.progressContainer}>
-            <View style={styles.progressRow}>
-              <Text style={styles.progressLabel}>5 / 8 Members</Text>
-            </View>
-            <View style={styles.progressBarBg}>
-              <View style={[styles.progressBarFill, { width: "62.5%" }]} />
-            </View>
-          </View>
-        </View>
-
-        {/* Divider Line */}
-        <View style={styles.divider} />
-
-        {/* --- About Section --- */}
-        <View style={styles.section}>
-          <Text style={styles.sectionHeader}>About the Trip</Text>
-          <Text style={styles.bodyText}>
-            This trip covers exploring the Northern Part of Cebu which is
-            Bantayan Island! It’s going to be a 4-day travel so join if you are
-            interested and you might know some other spots we can visit to 😁
+          {/* Managed By Section */}
+          <Text style={[styles.sectionHeader, { marginTop: 24 }]}>
+            Managed By
           </Text>
-        </View>
-
-        {/* --- Interests Section --- */}
-        <View style={styles.section}>
-          <Text style={styles.sectionHeader}>Interests</Text>
-          <View style={styles.tagsContainer}>
-            <Tag icon="🏝️" label="Island Hopper" />
-            <Tag icon="🌿" label="Calm" />
-            <Tag icon="🐚" label="Beach Lover" />
-            <Tag icon="👥" label="Group Travel" />
-            <Tag icon="🧭" label="Adventurous" />
+          <View style={styles.adminRow}>
+            <Image
+              source={{ uri: "https://placehold.co/50x50" }}
+              style={styles.adminAvatar}
+            />
+            <View style={styles.adminInfo}>
+              <Text style={styles.adminName}>Veniboo</Text>
+              <Text style={styles.adminRole}>Group Admin</Text>
+            </View>
+            <ChevronRight
+              size={20}
+              color="#083344"
+              style={{ marginLeft: "auto" }}
+            />
           </View>
+
+          {/* --- MAIN ACTION BUTTON (Toggle Logic) --- */}
+          <TouchableOpacity
+            style={[
+              styles.actionButton,
+              isJoined ? styles.btnRed : styles.btnOrange,
+            ]}
+            onPress={handleTripAction}
+          >
+            {isJoined && (
+              <LogOut size={18} color="#fff" style={{ marginRight: 8 }} />
+            )}
+            <Text style={styles.actionButtonText}>
+              {isJoined ? "Leave Trip" : "Request to Join Group"}
+            </Text>
+          </TouchableOpacity>
         </View>
 
-        {/* --- Travelers Note --- */}
-        <View style={styles.section}>
-          <Text style={styles.sectionHeader}>Travelers</Text>
-          <Text style={styles.bodyText}>
-            💗 5 out of 8 People have joined for this trip
-          </Text>
-        </View>
+        {/* Suggested Trips - Only show if NOT joined (Optional UX choice, but keeps screen clean) */}
+        {!isJoined && (
+          <>
+            <View style={styles.redDivider} />
+            <Text style={[styles.sectionHeader, { marginLeft: 24 }]}>
+              Suggested Trips Near This Trip...
+            </Text>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.horizontalScrollContent}
+            >
+              {SUGGESTED_TRIPS.map((trip) => (
+                <View key={trip.id} style={styles.tripCard}>
+                  <View style={styles.cardImageContainer}>
+                    <Image
+                      source={{ uri: trip.image }}
+                      style={styles.cardImage}
+                    />
+                  </View>
+                  <View style={styles.cardBody}>
+                    <Text style={styles.cardTitle}>{trip.title}</Text>
+                    <Text style={styles.cardDesc} numberOfLines={2}>
+                      {trip.desc}
+                    </Text>
+                    <View style={styles.cardFooter}>
+                      <Clock
+                        size={12}
+                        color="#6b7280"
+                        style={{ marginRight: 4 }}
+                      />
+                      <Text style={styles.cardTime}>{trip.readTime}</Text>
+                    </View>
+                  </View>
+                </View>
+              ))}
+              <View style={{ width: 24 }} />
+            </ScrollView>
+          </>
+        )}
+
+        <View style={{ height: 120 }} />
       </ScrollView>
-    </SafeAreaView>
+
+      {/* --- Header (Fixed) --- */}
+      <SafeAreaView style={styles.headerContainer}>
+        <View style={styles.headerContent}>
+          <TouchableOpacity style={styles.iconBtn}>
+            <ChevronLeft size={24} color="#083344" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>About Trip</Text>
+          <TouchableOpacity style={styles.iconBtn}>
+            <Bell size={24} color="#083344" />
+            <View style={styles.notifBadge} />
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+
+      {/* --- Bottom Navigation (Fixed) --- */}
+      <View style={styles.bottomBar}>
+        <View style={[styles.tabItem, styles.tabItemActive]}>
+          <View style={styles.activeTabIconBg}>
+            <Home size={20} color="#ef4444" />
+          </View>
+          <Text style={[styles.tabLabel, styles.textRed]}>My Trips</Text>
+        </View>
+        <View style={styles.tabItem}>
+          <Compass size={24} color="#6b7280" />
+          <Text style={styles.tabLabel}>Discover</Text>
+        </View>
+        <View style={styles.tabItem}>
+          <MessageCircle size={24} color="#6b7280" />
+          <Text style={styles.tabLabel}>Inbox</Text>
+        </View>
+        <View style={styles.tabItem}>
+          <User size={24} color="#6b7280" />
+          <Text style={styles.tabLabel}>Profile</Text>
+        </View>
+      </View>
+    </View>
   );
 }
-
-// Helper Component for Interests
-const Tag = ({ icon, label }: { icon: string; label: string }) => (
-  <View style={styles.tag}>
-    <Text style={styles.tagText}>
-      {icon} {label}
-    </Text>
-  </View>
-);
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F4F4F5", // zinc-100
+    backgroundColor: "#f4f4f5",
+  },
+  scrollContent: {
+    paddingBottom: 20,
   },
   // --- Header ---
-  header: {
+  headerContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 50,
+    backgroundColor: "rgba(244, 244, 245, 0.9)",
+  },
+  headerContent: {
+    height: 60,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 20,
-    paddingTop: Platform.OS === "android" ? 16 : 0,
-    paddingBottom: 10,
-    backgroundColor: "#F4F4F5",
-    zIndex: 10,
   },
   headerTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#083344", // cyan-950
+    fontSize: 22,
+    fontWeight: "800",
+    color: "#083344",
   },
-  iconButton: {
-    width: 48,
-    height: 48,
-    backgroundColor: "white",
+  iconBtn: {
+    width: 44,
+    height: 44,
+    backgroundColor: "#fff",
     borderRadius: 12,
-    alignItems: "center",
     justifyContent: "center",
-    // Shadow
+    alignItems: "center",
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
-    shadowRadius: 2,
+    shadowRadius: 5,
     elevation: 2,
   },
-  notificationDot: {
+  notifBadge: {
     position: "absolute",
     top: 14,
     right: 14,
     width: 8,
     height: 8,
-    backgroundColor: "#EF4444",
+    backgroundColor: "#ef4444",
     borderRadius: 4,
     borderWidth: 1,
-    borderColor: "white",
+    borderColor: "#fff",
   },
 
-  // --- Scroll Content ---
-  scrollContent: {
-    paddingBottom: 110, // space for bottom nav
-  },
-
-  // --- Hero Image ---
+  // --- Hero ---
   heroContainer: {
-    paddingHorizontal: 20,
-    marginTop: 12,
-    marginBottom: 20,
-  },
-  heroImageWrapper: {
-    height: 192,
+    marginHorizontal: 14,
+    marginTop: 4,
+    height: 240,
     borderRadius: 16,
-    overflow: "hidden",
     position: "relative",
-    backgroundColor: "white",
-    // shadow
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
+    zIndex: 1,
   },
   heroImage: {
     width: "100%",
     height: "100%",
+    borderRadius: 16,
   },
   activeBadge: {
     position: "absolute",
     top: 10,
     left: 10,
-    backgroundColor: "white",
-    flexDirection: "row",
-    alignItems: "center",
+    backgroundColor: "#fff",
+    borderRadius: 20,
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 20,
+    flexDirection: "row",
+    alignItems: "center",
   },
   activeDot: {
     width: 8,
     height: 8,
-    backgroundColor: "#EF4444",
+    backgroundColor: "#ef4444",
     borderRadius: 4,
     marginRight: 6,
   },
   activeText: {
-    color: "#EF4444",
-    fontWeight: "bold",
+    color: "#ef4444",
+    fontWeight: "700",
     fontSize: 14,
   },
   menuButton: {
     position: "absolute",
     top: 10,
     right: 10,
-    width: 32,
-    height: 32,
-    backgroundColor: "white",
-    borderRadius: 8,
-    alignItems: "center",
+    width: 36,
+    height: 36,
+    backgroundColor: "#fff",
+    borderRadius: 10,
     justifyContent: "center",
+    alignItems: "center",
+  },
+  popupMenu: {
+    position: "absolute",
+    top: 50,
+    right: 10,
+    width: 150,
+    backgroundColor: "#fafafa",
+    borderRadius: 12,
+    paddingVertical: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 8,
+    zIndex: 100,
+  },
+  menuItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+  },
+  menuIcon: { marginRight: 10 },
+  menuText: {
+    color: "#ef4444",
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  menuDivider: {
+    height: 1,
+    backgroundColor: "rgba(239, 68, 68, 0.2)",
+    marginHorizontal: 16,
   },
 
   // --- Info Section ---
   infoSection: {
     paddingHorizontal: 24,
-    marginBottom: 16,
+    marginTop: 16,
   },
   tripTitle: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: "600",
     color: "#083344",
     marginBottom: 8,
   },
-  metaRow: {
+  row: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 6,
   },
-  metaText: {
-    color: "#083344",
+  subText: {
     fontSize: 12,
-    marginLeft: 8,
-  },
-  flagEmoji: {
-    fontSize: 14,
-  },
-  locationText: {
     color: "#083344",
-    fontSize: 14,
-    marginLeft: 4,
-  },
-  budgetEmoji: {
-    fontSize: 12,
-  },
-
-  // --- Members ---
-  membersSection: {
-    paddingHorizontal: 24,
-    marginBottom: 20,
-  },
-  avatarsRow: {
-    flexDirection: "row",
-    marginBottom: 16,
-    paddingLeft: 4,
-  },
-  avatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    borderWidth: 2,
-    borderColor: "#F4F4F5",
-  },
-  progressContainer: {
-    marginTop: 4,
-  },
-  progressRow: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    marginBottom: 4,
-  },
-  progressLabel: {
-    color: "#083344",
-    fontSize: 14,
-  },
-  progressBarBg: {
-    height: 2,
-    backgroundColor: "rgba(239, 68, 68, 0.2)", // red-500/20
-    width: "100%",
-    borderRadius: 1,
-  },
-  progressBarFill: {
-    height: 2,
-    backgroundColor: "#EF4444",
-    borderRadius: 1,
-  },
-
-  // --- Divider ---
-  divider: {
-    height: 1,
-    backgroundColor: "rgba(239, 68, 68, 0.2)",
-    marginHorizontal: 24,
-    marginBottom: 20,
-  },
-
-  // --- Generic Section ---
-  section: {
-    paddingHorizontal: 24,
-    marginBottom: 24,
   },
   sectionHeader: {
     fontSize: 16,
@@ -369,82 +537,239 @@ const styles = StyleSheet.create({
     color: "#083344",
     marginBottom: 8,
   },
-  bodyText: {
+  paragraph: {
     fontSize: 12,
     color: "#083344",
     lineHeight: 18,
     textAlign: "justify",
+    marginBottom: 16,
+  },
+  redDivider: {
+    height: 2,
+    backgroundColor: "rgba(239, 68, 68, 0.4)",
+    marginVertical: 16,
+    width: "100%",
   },
 
-  // --- Tags ---
-  tagsContainer: {
+  // --- Joined/Interest Views ---
+  joinedContainer: {
+    marginBottom: 16,
+  },
+  matchScoreText: {
+    fontSize: 18,
+    color: "#083344", // cyan-950
+    marginBottom: 12,
+    fontWeight: "500",
+    lineHeight: 24,
+  },
+  diffHeader: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#083344",
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  interestContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 8,
+    gap: 10,
+    marginBottom: 10,
   },
-  tag: {
-    backgroundColor: "white",
+  interestChip: {
     paddingHorizontal: 12,
     paddingVertical: 8,
+    backgroundColor: "#fff",
     borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#FECDD3", // rose-200
-    // shadow
+    borderWidth: 1.5,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
-    shadowRadius: 4,
     elevation: 1,
   },
-  tagText: {
+  // Chip Variants
+  chipRose: {
+    borderColor: "#fecdd3", // rose-200 (Default)
+  },
+  chipCyan: {
+    borderColor: "#06b6d4", // cyan-500 (Matched)
+  },
+  chipGray: {
+    borderColor: "#9ca3af", // gray-400 (Difference)
+  },
+  interestText: {
     fontSize: 14,
     fontWeight: "500",
     color: "#083344",
   },
 
-  // --- Bottom Nav ---
-  bottomNav: {
+  // --- Travelers ---
+  avatarRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  avatar: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: "#f4f4f5",
+  },
+
+  // --- Managed By ---
+  adminRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  adminAvatar: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.5)",
+    marginRight: 12,
+  },
+  adminInfo: {
+    justifyContent: "center",
+  },
+  adminName: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: "#083344",
+  },
+  adminRole: {
+    fontSize: 12,
+    color: "#083344",
+  },
+
+  // --- Action Button (Shared Styles) ---
+  actionButton: {
+    borderRadius: 12,
+    paddingVertical: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+    borderWidth: 2,
+    borderColor: "#fff",
+    shadowColor: "#000",
+    shadowOpacity: 0.15,
+    shadowRadius: 5,
+    elevation: 3,
+    marginBottom: 8,
+  },
+  btnOrange: {
+    backgroundColor: "#fb923c", // orange-400
+  },
+  btnRed: {
+    backgroundColor: "#ef4444", // red-500
+  },
+  actionButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+
+  // --- Suggested Trips (Horizontal) ---
+  horizontalScrollContent: {
+    paddingLeft: 24,
+    paddingBottom: 20,
+    marginTop: 10,
+  },
+  tripCard: {
+    width: 160,
+    height: 200,
+    backgroundColor: "#f3f4f6", // gray-100
+    borderRadius: 16,
+    marginRight: 12,
+    shadowColor: "#030096",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.07,
+    shadowRadius: 10,
+    elevation: 4,
+    borderWidth: 1,
+    borderColor: "rgba(0,0,0,0.05)",
+    overflow: "hidden",
+  },
+  cardImageContainer: {
+    height: 90,
+    width: "100%",
+    overflow: "hidden",
+  },
+  cardImage: {
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
+  },
+  cardBody: {
+    padding: 10,
+    justifyContent: "space-between",
+    flex: 1,
+  },
+  cardTitle: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#083344",
+    marginBottom: 4,
+  },
+  cardDesc: {
+    fontSize: 10,
+    color: "#6b7280",
+    lineHeight: 14,
+  },
+  cardFooter: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 6,
+  },
+  cardTime: {
+    fontSize: 10,
+    color: "#6b7280",
+    fontWeight: "300",
+  },
+
+  // --- Bottom Bar ---
+  bottomBar: {
     position: "absolute",
     bottom: 0,
-    width: "100%",
+    left: 0,
+    right: 0,
     height: 90,
-    backgroundColor: "white",
+    backgroundColor: "rgba(255,255,255,0.9)",
     borderTopLeftRadius: 35,
     borderTopRightRadius: 35,
     flexDirection: "row",
     justifyContent: "space-around",
-    alignItems: "center",
-    paddingBottom: 20,
+    paddingTop: 16,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.1,
     shadowRadius: 20,
-    elevation: 10,
+    elevation: 20,
   },
-  navItem: {
+  tabItem: {
     alignItems: "center",
+    gap: 4,
+    width: 60,
   },
-  navItemInactive: {
-    alignItems: "center",
-    opacity: 0.5,
-  },
-  navIconActive: {
-    width: 48,
-    height: 48,
-    backgroundColor: "#FFF7ED", // orange-50
+  tabItemActive: {
+    backgroundColor: "#fff7ed",
     borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 4,
+    marginTop: -8,
+    paddingTop: 8,
+    height: 70,
+    width: 70,
   },
-  navTextActive: {
-    color: "#EF4444",
+  activeTabIconBg: {
+    width: 28,
+    height: 28,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  tabLabel: {
     fontSize: 10,
+    color: "#6b7280",
     fontWeight: "500",
   },
-  navTextInactive: {
-    color: "#64748B",
-    fontSize: 10,
-    marginTop: 4,
+  textRed: {
+    color: "#ef4444",
   },
 });

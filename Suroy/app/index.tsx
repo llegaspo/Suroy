@@ -21,8 +21,8 @@ export default function Initialize() {
         //current session exit => no onBoarding
         setTimeout(() => {
           if (true) {
-            // router.replace("/onBoarding/getStarted");
-            router.replace("/(tabs)/myTrips");
+            router.replace("/onBoarding/getStarted");
+            // router.replace("/(tabs)/myTrips");
           } else {
             router.replace("/(first)/language");
           }

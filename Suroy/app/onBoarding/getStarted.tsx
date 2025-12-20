@@ -6,440 +6,197 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
+  Platform,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-// Adjust this import path based on your folder structure
-import { getFontFamily } from "@/fonts/fontConfig";
 import { router } from "expo-router";
+import { AntDesign } from "@expo/vector-icons";
 
-const { width } = Dimensions.get("window");
+const { width, height } = Dimensions.get("window");
 
 export default function SuroyScreen() {
-  // Since your Initialize screen handles the waiting, we assume fonts are loaded here.
-  const fontsLoaded = true;
-
-  const handleSignIn = () => router.replace("./signIn");
-
   return (
     <View style={styles.container}>
-      {/* --- BACKGROUND MASONRY GRID --- */}
-
-      {/* Column 1 */}
-      <View
-        style={[styles.cardContainer, { left: 10.85, top: -164, height: 80 }]}
-      >
-        <View style={[styles.cardBg, { height: 80 }]} />
-      </View>
-
-      <View
-        style={[styles.cardContainer, { left: 10.85, top: -69, height: 192 }]}
-      >
-        <View style={[styles.cardBg, { height: 192 }]} />
-        <Image
-          style={{
-            width: 128,
-            height: 160,
-            top: 28,
-            left: 0,
-            position: "absolute",
-          }}
-          source={{ uri: "https://placehold.co/120x158" }}
-        />
-      </View>
-
-      <View
-        style={[styles.cardContainer, { left: 10.85, top: 320, height: 192 }]}
-      >
-        <View style={[styles.cardBg, { height: 192 }]} />
-        <Image
-          style={{ width: 128, height: 192, left: -9, position: "absolute" }}
-          source={{ uri: "https://placehold.co/135x196" }}
-        />
-      </View>
-
-      <View
-        style={[styles.cardContainer, { left: 10.85, top: 129, height: 176 }]}
-      >
-        <View style={[styles.cardBg, { height: 176 }]} />
-        <Image
-          style={{
-            width: 256,
-            height: 192,
-            left: -131,
-            top: -10,
-            position: "absolute",
-          }}
-          source={{ uri: "https://placehold.co/262x192" }}
-        />
-      </View>
-
-      {/* Column 2 */}
-      <View
-        style={[
-          styles.cardBg,
-          {
-            width: 112,
-            height: 160,
-            left: 137.72,
-            top: -195,
-            position: "absolute",
-            borderRadius: 16,
-          },
-        ]}
+      {/* Background Image */}
+      <Image
+        // Make sure to switch this to your local require() image for best quality!
+        source={{
+          uri: "https://drive.google.com/uc?export=view&id=1umlPYXvh8pAm6UpvL0y-A0gPL-9Ju52n",
+        }}
+        style={styles.backgroundImage}
+        resizeMode="cover"
       />
 
-      <View
-        style={[styles.cardContainer, { left: 137.72, top: -30, height: 160 }]}
-      >
-        <View style={[styles.cardBg, { height: 160 }]} />
-        <Image
-          style={{
-            width: 128,
-            height: 160,
-            top: -7,
-            left: 0,
-            position: "absolute",
-          }}
-          source={{ uri: "https://placehold.co/124x167" }}
-        />
-      </View>
-
-      <View
-        style={[styles.cardContainer, { left: 137.72, top: 450, height: 160 }]}
-      >
-        <View style={[styles.cardBg, { height: 160 }]} />
-        <Image
-          style={{
-            width: 128,
-            height: 160,
-            top: -7,
-            left: 0,
-            position: "absolute",
-          }}
-          source={{ uri: "https://placehold.co/124x167" }}
-        />
-      </View>
-
-      <View
-        style={[styles.cardContainer, { left: 137.72, top: 257, height: 176 }]}
-      >
-        <View style={[styles.cardBg, { height: 176 }]} />
-        <Image
-          style={{
-            width: 256,
-            height: 176,
-            left: -80,
-            top: 0,
-            position: "absolute",
-          }}
-          source={{ uri: "https://placehold.co/262x184" }}
-        />
-      </View>
-
-      <View
-        style={[styles.cardContainer, { left: 137.72, top: 135, height: 112 }]}
-      >
-        <View style={[styles.cardBg, { height: 112 }]} />
-        <Image
-          style={{
-            width: 176,
-            height: 128,
-            left: -28,
-            top: -7,
-            position: "absolute",
-          }}
-          source={{ uri: "https://placehold.co/170x123" }}
-        />
-      </View>
-
-      {/* Column 3 */}
-      <View
-        style={[
-          styles.cardBg,
-          {
-            width: 112,
-            height: 112,
-            left: 264.59,
-            top: -164,
-            position: "absolute",
-            borderRadius: 16,
-          },
-        ]}
-      />
-
-      <View
-        style={[styles.cardContainer, { left: 264.59, top: -36, height: 240 }]}
-      >
-        <View style={[styles.cardBg, { height: 240 }]} />
-        <Image
-          style={{
-            width: 128,
-            height: 240,
-            left: -5,
-            top: -9,
-            position: "absolute",
-          }}
-          source={{ uri: "https://placehold.co/133x248" }}
-        />
-      </View>
-
-      <View
-        style={[
-          styles.cardContainer,
-          { left: 265.07, top: 214.78, height: 144 },
-        ]}
-      >
-        <Image
-          style={{ width: 112, height: 144, borderRadius: 16 }}
-          source={{ uri: "https://placehold.co/113x147" }}
-        />
-      </View>
-
-      <View
-        style={[styles.cardContainer, { left: 267, top: 389.72, height: 144 }]}
-      >
-        <Image
-          style={{
-            width: 240,
-            height: 144,
-            left: -24,
-            top: 0,
-            position: "absolute",
-          }}
-          source={{ uri: "https://placehold.co/243x147" }}
-        />
-      </View>
-
-      {/* --- GRADIENT OVERLAY --- */}
+      {/* Gradient Overlay */}
       <LinearGradient
-        start={{ x: 1, y: 0 }}
-        end={{ x: 0, y: 0 }}
-        colors={[
-          "rgba(244, 244, 245, 0.75)",
-          "rgba(244, 244, 245, 0.25)",
-          "rgba(244, 244, 245, 0.95)",
-        ]}
-        style={styles.gradient}
+        colors={["transparent", "rgba(244, 244, 245, 0.6)", "#f4f4f5"]}
+        style={styles.gradientOverlay}
+        start={{ x: 0.5, y: 0 }}
+        end={{ x: 0.5, y: 1 }}
       />
 
-      {/* --- FLOATING ICON --- */}
-      <View style={styles.floatingIconCard}>
-        <View style={styles.indigoRect} />
-        <View style={styles.orangeDot} />
+      {/* Title Section - NOW CENTERED */}
+      <View style={styles.topContent}>
+        <Text style={styles.titleText}>Suroy</Text>
+        <Text style={styles.subtitleText}>
+          Reimagine Travel Experience in Cebu
+        </Text>
       </View>
 
-      {/* --- TEXT CONTENT --- */}
-      <Text style={styles.titleText}>Suroy</Text>
-
-      <Text style={styles.subtitleText}>
-        Reimagine Travel Experience in Cebu
-      </Text>
-
-      {/* --- ACTION BUTTON --- */}
-      <TouchableOpacity
-        onPress={() => router.navigate("./onBoarding1")}
-        style={styles.actionButton}
-      >
-        <View style={styles.buttonIconWrapper}>
-          <View style={styles.buttonIconInner} />
-        </View>
-        <Text style={styles.buttonText}>Get started</Text>
-      </TouchableOpacity>
-
-      {/* --- FOOTER LINKS --- */}
-      <View style={styles.signInRow}>
-        <Text style={styles.textGray}>Already joined? </Text>
-        <TouchableOpacity onPress={handleSignIn}>
-          <Text style={styles.textSlate}>Sign in</Text>
+      {/* Bottom Section - NOW CENTERED */}
+      <View style={styles.bottomContent}>
+        {/* Get Started Button */}
+        <TouchableOpacity
+          style={styles.buttonContainer}
+          onPress={() => router.push("./onBoarding1")}
+        >
+          <View style={styles.iconWrapper}>
+            <AntDesign name="arrowright" size={24} color="#fb923c" />
+          </View>
+          <Text style={styles.buttonText}>Get started</Text>
         </TouchableOpacity>
-      </View>
 
-      <Text style={styles.termsText}>
-        <Text style={styles.textSlateSmall}>
-          By tapping Get started, you agree with our{" "}
-        </Text>
-        <Text style={styles.textBlueSmall}>Terms.{"\n"}</Text>
-        <Text style={styles.textSlateSmall}>
-          See how we process data in our{" "}
-        </Text>
-        <Text style={styles.textBlueSmall}>Privacy Policy.</Text>
-      </Text>
+        {/* Login Link */}
+        <View style={styles.loginLinkContainer}>
+          <Text style={styles.textGray}>Already joined?</Text>
+          <TouchableOpacity onPress={() => router.replace("./signIn")}>
+            <Text style={styles.textDarkBlue}> Sign in</Text>
+          </TouchableOpacity>
+        </View>
 
-      {/* --- HOME INDICATOR --- */}
-      <View style={styles.homeIndicatorWrapper}>
-        <View style={styles.homeIndicator} />
+        {/* Footer / Terms */}
+        <View style={styles.footerContainer}>
+          <Text style={styles.footerText}>
+            <Text style={styles.footerTextNormal}>
+              By tapping Get started, you agree with our{" "}
+            </Text>
+            <Text style={styles.footerTextBold}>Terms.</Text>
+            <Text style={styles.footerTextNormal}>
+              {"\n"}See how we process data in our{" "}
+            </Text>
+            <Text style={styles.footerTextBold}>Privacy Policy.</Text>
+          </Text>
+        </View>
       </View>
     </View>
   );
 }
 
-// NOTE: We pass 'true' to getFontFamily assuming this screen is only reached
-// after your Initialize screen has successfully loaded fonts.
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f4f4f5",
-    position: "relative",
-    overflow: "hidden",
-    width: "100%",
-    maxWidth: 420,
-    alignSelf: "center",
   },
-  gradient: {
+  backgroundImage: {
     position: "absolute",
-    width: "100%",
-    height: 695,
-    top: -8,
-    left: 0,
-  },
-  // Masonry Helpers
-  cardContainer: {
-    position: "absolute",
-    width: 112,
-    borderRadius: 16,
-    overflow: "hidden",
-  },
-  cardBg: {
-    width: 112,
-    backgroundColor: "#d6d3d1",
-    borderRadius: 16,
-    position: "absolute",
+    width: width,
+    height: height + 50,
     top: 0,
     left: 0,
   },
-  // Floating Icon
-  floatingIconCard: {
-    width: 112,
-    height: 112,
-    left: 142.35,
-    top: 368,
+  gradientOverlay: {
     position: "absolute",
-    backgroundColor: "white",
-    borderRadius: 24,
-    overflow: "hidden",
-    elevation: 5,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: "50%",
   },
-  indigoRect: {
-    width: 40,
-    height: 64,
-    left: 34.5,
-    top: 24,
+
+  // -- Top Content (Centered) --
+  topContent: {
     position: "absolute",
-    backgroundColor: "#818cf8",
+    top: "50%", // Adjusted to look balanced
+    width: "100%", // Ensures it spans full width for centering
+    alignItems: "center", // Horizontal centering
   },
-  orangeDot: {
-    width: 12,
-    height: 12,
-    left: 48.2,
-    top: 37.75,
-    position: "absolute",
-    backgroundColor: "#fb923c",
-  },
-  // Text
   titleText: {
-    position: "absolute",
-    left: 120,
-    top: 482,
     fontSize: 48,
-    color: "#0e7490",
-    // Using SFDisplay Light to replace "Unbounded Light"
-    fontFamily: getFontFamily("SFDisplay", "light", true),
+    fontWeight: "300",
+    color: "#083344",
+    fontFamily: Platform.OS === "ios" ? "System" : "sans-serif",
+    marginBottom: 8,
+    textAlign: "center", // Text centering
   },
   subtitleText: {
-    position: "absolute",
-    left: 69,
-    top: 545,
     fontSize: 16,
-    color: "#475569",
-    lineHeight: 16,
-    // Using SFText Medium to replace "Inter Medium"
-    fontFamily: getFontFamily("SFText", "medium", true),
+    fontWeight: "500",
+    color: "#0c4a6e",
+    textAlign: "center", // Text centering
+    maxWidth: "80%", // Prevents it from touching edges on small screens
   },
-  // Button
-  actionButton: {
+
+  // -- Bottom Content (Centered) --
+  bottomContent: {
     position: "absolute",
-    left: 31.5,
-    top: 603,
+    bottom: 50,
+    width: "100%",
+    alignItems: "center",
+  },
+
+  // -- Button Styles (Centered Internally) --
+  buttonContainer: {
     width: 320,
     height: 64,
-    backgroundColor: "#0e7490",
+    backgroundColor: "#fb923c",
     borderRadius: 16,
     flexDirection: "row",
     alignItems: "center",
-    paddingLeft: 104,
+    justifyContent: "center", // Centers the Icon+Text group inside the button
+    marginBottom: 24,
+    shadowColor: "#fb923c",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
   },
-  buttonIconWrapper: {
-    width: 24,
-    height: 24,
-    marginRight: 10,
-    justifyContent: "center",
+  iconWrapper: {
+    width: 32,
+    height: 32,
+    backgroundColor: "#fff",
+    borderRadius: 8,
     alignItems: "center",
-  },
-  buttonIconInner: {
-    width: 16,
-    height: 16,
-    borderColor: "#f4f4f5",
-    borderWidth: 1.5,
-    borderRadius: 2,
+    justifyContent: "center",
+    marginRight: 16, // Space between icon and text
+    // Removed absolute positioning here to let flexbox handle it
   },
   buttonText: {
-    color: "#f4f4f5",
+    color: "#fff",
     fontSize: 16,
-    // Using SFText Medium
-    fontFamily: getFontFamily("SFText", "medium", true),
+    fontWeight: "600",
   },
-  // Footer
-  signInRow: {
-    position: "absolute",
-    left: 115,
-    top: 680,
+
+  // -- Login Link Styles --
+  loginLinkContainer: {
     flexDirection: "row",
-  },
-  termsText: {
-    position: "absolute",
-    left: 53.5,
-    top: 753,
-    textAlign: "center",
-    width: 280,
+    marginBottom: 32,
   },
   textGray: {
-    color: "#6b7280",
+    color: "#64748b",
     fontSize: 16,
-    fontFamily: getFontFamily("SFText", "medium", true),
+    fontWeight: "500",
   },
-  textSlate: {
-    color: "#475569",
+  textDarkBlue: {
+    color: "#083344",
     fontSize: 16,
-    fontFamily: getFontFamily("SFText", "medium", true),
+    fontWeight: "700",
   },
-  textSlateSmall: {
-    color: "#475569",
-    fontSize: 12,
+
+  // -- Footer Styles --
+  footerContainer: {
+    width: 280,
+  },
+  footerText: {
+    textAlign: "center",
     lineHeight: 20,
-    fontFamily: getFontFamily("SFText", "regular", true),
   },
-  textBlueSmall: {
+  footerTextNormal: {
+    color: "#083344",
+    fontSize: 12,
+    fontWeight: "400",
+  },
+  footerTextBold: {
     color: "#172554",
     fontSize: 12,
-    lineHeight: 20,
-    fontFamily: getFontFamily("SFText", "medium", true),
-  },
-  // Home Indicator
-  homeIndicatorWrapper: {
-    position: "absolute",
-    left: 136,
-    top: 820,
-    width: 112,
-    height: 8,
-  },
-  homeIndicator: {
-    width: "100%",
-    height: "100%",
-    backgroundColor: "black",
-    borderRadius: 100,
+    fontWeight: "600",
   },
 });
