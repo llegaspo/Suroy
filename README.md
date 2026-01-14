@@ -42,7 +42,7 @@ Unlike standard keyword search, Suroy utilizes **Vector Embeddings** to power it
 
 1.  **Clone the repo**
     ```bash
-    git clone [https://github.com/yourusername/suroy.git](https://github.com/yourusername/suroy.git)
+    git clone https://github.com/llegaspo/Suroy.git
     ```
 2.  **Install dependencies**
     ```bash
@@ -56,4 +56,4 @@ Unlike standard keyword search, Suroy utilizes **Vector Embeddings** to power it
     ```
 
 ---
-*Developed by [Your Name]*
+*Developed by Caringal, Catedral, Duterte, Gaas, Legaspo*
